@@ -23,7 +23,7 @@ def writeTxt_mallnumber(data,mallnumber):
 
 
 # read the train_shop_info.csv
-def readCsvShop():
+def readCsvShop(mall):
     with open('../source/train_shop_info.csv', 'r') as f:
         data = csv.reader(f)
 
@@ -34,7 +34,7 @@ def readCsvShop():
         mall_shopnumber = {}
 
         # mall m_690 的商铺id-字典
-        mall_shop_id = {'m_690': []}
+        mall_shop_id = {mall: []}
 
         # 总的店铺数
         shop_total = 0
@@ -121,7 +121,7 @@ def readCvsUser(mallshop_id):
 
 
 def main():
-    shopbumber, mallnumber, mallshop_id = readCsvShop()
+    shopbumber, mallnumber, mallshop_id = readCsvShop('m_690')
     # writeTxt_mallnumber(shopbumber, mallnumber)
     readCvsUser(mallshop_id)
 
