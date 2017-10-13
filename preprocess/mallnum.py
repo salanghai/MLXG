@@ -52,8 +52,8 @@ def readCsvShop(mall):
             else:
                 mall_shopnumber[mall_name] = 1
 
-            if mall_name == 'm_690':
-                mall_shop_id['m_690'].append(shop_id)
+            if mall_name == mall:
+                mall_shop_id[mall].append(shop_id)
 
             mall_id_list.append(line[-1])
 
@@ -63,12 +63,12 @@ def readCsvShop(mall):
         mall_id = set(mall_id_list)
     print 'total mall number: ' +str(len(mall_id))
     print 'total shop number: ' + str(shop_total)
-    print mall_shop_id
-    return mall_shopnumber, len(mall_id), mall_shop_id
+    # print mall_shop_id
+    return mall_shopnumber, mall_shop_id
 
 
 def readCvsUser(mallshop_id):
-    print len(mallshop_id['m_690'])
+    print len(mallshop_id['m_1409'])
     with open('../source/train_user_info.csv') as csvf:
         user_info = csv.DictReader(csvf)
 
@@ -121,7 +121,7 @@ def readCvsUser(mallshop_id):
 
 
 def main():
-    shopbumber, mallnumber, mallshop_id = readCsvShop('m_690')
+    shopbumber, mallshop_id = readCsvShop('m_1409')
     # writeTxt_mallnumber(shopbumber, mallnumber)
     readCvsUser(mallshop_id)
 
