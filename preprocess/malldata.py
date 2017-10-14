@@ -9,8 +9,8 @@
      mallnum.py中的其他函数可能有问题，不要使用
      尽量使用malldata.py
 
-     数据格式:字典嵌套，易于查找，没有时间戳
-     {'m_690': {'s_123':{'longtitude': [],'latitude':[], 'wifiinfo': [[bssid],[-89],[true\false]],'wifiinfo_bssid_num:69}, 's_234':{},.......}}
+     数据格式:字典嵌套
+     {'m_690': {'s_123':{'longtitude': [],'latitude':[], 'wifiinfo': [[bssid],[-89],[true\false]],'wifiinfo_bssid_num':69,'time_stamp':[[]]}, 's_234':{},.......}}
      使用参考打印数据
 
 '''
@@ -54,6 +54,16 @@ def getMallData(mall_name):
                     wifiinfo[2].append(bssid[2])
 
                 # 时间戳数据处理
+                time_stamp = []
+                time_stamp_str = line['time_stamp']
+                time_stamp_str = time_stamp_str.split("-")[1:]
+                time_stamp.append(time_stamp_str[0])
+                time_stamp_str[1] = time_stamp_str[1].split(' ')
+                time_stamp.append(time_stamp_str[1][0])
+                time_stamp_str = time_stamp_str[1][1].split(':')
+                time_stamp.append(time_stamp_str[0])
+                time_stamp.append(time_stamp_str[1])
+                # print time_stamp
 
                 # 添加数据到mall中
                 curshop = line['shop_id']
@@ -61,9 +71,12 @@ def getMallData(mall_name):
                     mall[mall_name][curshop] = {}
                     mall[mall_name][curshop]['longitude'] = []
                     mall[mall_name][curshop]['latitude'] = []
+                    mall[mall_name][curshop]['time_stamp'] = []
+                    mall[mall_name][curshop]['time_stamp'].append(time_stamp)
                     mall[mall_name][curshop]['wifiinfo'] = wifiinfo
                     mall[mall_name][curshop]['longitude'].append(line['longitude'])
                     mall[mall_name][curshop]['latitude'].append(line['latitude'])
+
                     # mall[mall_name][curshop]['time_stamp'] = line['time_stamp']
                 else:
                     mall[mall_name][curshop]['longitude'].append(line['longitude'])
@@ -71,6 +84,7 @@ def getMallData(mall_name):
                     mall[mall_name][curshop]['wifiinfo'][0] = mall[mall_name][curshop]['wifiinfo'][0] + wifiinfo[0]
                     mall[mall_name][curshop]['wifiinfo'][1] = mall[mall_name][curshop]['wifiinfo'][1] + wifiinfo[1]
                     mall[mall_name][curshop]['wifiinfo'][1] = mall[mall_name][curshop]['wifiinfo'][2] + wifiinfo[2]
+                    mall[mall_name][curshop]['time_stamp'].append(time_stamp)
 
     for shop in mall_shop_id[mall_name]:
         mall[mall_name][shop]['wifiinfo_bssid_num'] = len(set(mall[mall_name][shop]['wifiinfo'][0]))
@@ -82,12 +96,13 @@ def getMallData(mall_name):
 
 def main():
     mall = getMallData('m_1409')
+    a = 1
 
     # 打印数据
-    print 's_2871718 total bssid num', mall['m_1409']['s_2871718']['wifiinfo_bssid_num'], '\n'
-    print 's_2871718 all gps:'
-    print 'lonitude:', mall['m_1409']['s_2871718']['longitude'], '\n'
-    print 'latitude', mall['m_1409']['s_2871718']['latitude']
+    # print 's_2871718 total bssid num', mall['m_1409']['s_2871718']['wifiinfo_bssid_num'], '\n'
+    # print 's_2871718 all gps:'
+    # print 'lonitude:', mall['m_1409']['s_2871718']['longitude'], '\n'
+    # print 'latitude', mall['m_1409']['s_2871718']['latitude']
 
 
 if __name__ == '__main__':
