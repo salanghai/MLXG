@@ -9,7 +9,7 @@
      mallnum.py中的其他函数可能有问题，不要使用
      尽量使用malldata.py
 
-     数据格式:字典嵌套，易于查找
+     数据格式:字典嵌套，易于查找，没有时间戳
      {'m_690': {'s_123':{'longtitude': [],'latitude':[], 'wifiinfo': [[bssid],[-89],[true\false]],'wifiinfo_bssid_num:69}, 's_234':{},.......}}
      使用参考打印数据
 
