@@ -96,7 +96,6 @@ def getMallData(mall_name):
 
 def main():
     mall = getMallData('m_1409')
-    a = 1
 
     # 打印数据
     # print 's_2871718 total bssid num', mall['m_1409']['s_2871718']['wifiinfo_bssid_num'], '\n'
