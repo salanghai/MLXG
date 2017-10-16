@@ -166,7 +166,8 @@ def visitNumberMeans(mall_name, mall_data):
     y = []
     y_dict = {}
     shopVisitMeans = []
-    shop_mostVisitDay = {}
+    shop_mostVisitDay = []
+    shop_mostVisitDay_num = []
     shop_numbers, mall_shop_id = readCsvShop(mall_name)
 
     for shop in mall_shop_id[mall_name]:
@@ -181,7 +182,9 @@ def visitNumberMeans(mall_name, mall_data):
             x.append(int(day))
             y.append(num)
 
-        shop_mostVisitDay[str(max(y))] = x[y.index(max(y))]
+        shop_mostVisitDay.append(x[y.index(max(y))])
+        shop_mostVisitDay_num.append(max(y))
+
         shopVisitMeans.append(sum(x) / len(y))
         x = []
         y = []
@@ -190,14 +193,16 @@ def visitNumberMeans(mall_name, mall_data):
     fig = plt.figure(1)
     ax = fig.add_subplot(111)
     ax.bar(range(shop_numbers[mall_name]), shopVisitMeans)
-    ax.title('shop visit number means')
+    ax.set_title('shop visit number means')
 
-    with open(r'../source/mall_shop_most_visit_day.txt', 'r') as f:
-        f.write("each shop's most visit day and visit num" + '\n')
-        f.write('\n' + 'shop:         ' + 'num:   ' + 'day:')
+    with open(r'../source/' + mall_name + '_shop_most_visit_day.csv', 'w') as f:
+        writer = csv.writer(f)
+
+        writer.writerow(['shop', 'date', 'mostvisitnum'])
+        i = 0
         for shop in mall_shop_id[mall_name]:
-            f.write('%s:')
-
+            writer.writerow([shop, shop_mostVisitDay[i], shop_mostVisitDay_num[i]])
+            i += 1
     plt.show()
 
 
@@ -207,11 +212,12 @@ def visitNumberMeans(mall_name, mall_data):
 def main():
     mall, mall_shop_id= getMallData('m_1409')
 
-    # 画商店访问量
-    # visitNumberFigure_oneshop('m_1409', 's_2871718', mall)
-    visitNumberMeans('m_1409', mall)
+    # 画一家商店的访问量
+    # visitNumberFigure_oneshop('m_1409', 's_3963602', mall)
+    # 画多家商店（一次九个，需要自己调参数）
     # visitNumberFigure_multishop('m_1409', mall)
-
+    # 画一个商场商店访问平均值和写出访问最多那一天的次数和日期
+    # visitNumberMeans('m_1409', mall)
 
     # 打印数据
     # print 's_2871718 total bssid num', mall['m_1409']['s_2871718']['wifiinfo_bssid_num'], '\n'

@@ -123,7 +123,7 @@ def readCvsUser(mallshop_id):
 def main():
     shopbumber, mallshop_id = readCsvShop('m_1409')
     # writeTxt_mallnumber(shopbumber, mallnumber)
-    readCvsUser(mallshop_id)
+    # readCvsUser(mallshop_id)
 
 
 if __name__ == '__main__':
