@@ -17,6 +17,7 @@
 
 
 import csv
+import matplotlib.pyplot as plt
 from mallnum import readCsvShop
 
 
@@ -88,14 +89,129 @@ def getMallData(mall_name):
 
     for shop in mall_shop_id[mall_name]:
         mall[mall_name][shop]['wifiinfo_bssid_num'] = len(set(mall[mall_name][shop]['wifiinfo'][0]))
-    return mall
+    return mall, mall_shop_id
+
+
+'''draw the figure of a shop' visit number'''
+
+
+def visitNumberFigure_oneshop(mall_name, shop_id, mall_data):
+    # 每次画一个图
+    x = []
+    y = []
+    y_dict = {}
+    for data in mall_data[mall_name][shop_id]['time_stamp']:
+        if data[1] in y_dict.keys():
+            y_dict[data[1]] += 1
+        else:
+            y_dict[data[1]] = 1
+
+    for day, num in y_dict.items():
+        x.append(int(day))
+        y.append(num)
+
+    fig = plt.figure(1)
+    ax1 = fig.add_subplot(111)
+
+    ax1.bar(x, y, 0.2)
+    xsticks = range(0, max(x) + 1, 1)
+    ax1.set_xticks(xsticks)
+    plt.xlabel('days')
+    plt.ylabel('visit number')
+    print 'total visit number: %d' % len(mall_data[mall_name][shop_id]['time_stamp'])
+    plt.show()
+
+
+'''画多个商店访问量，每行3个，每次三行，一次画出9个商店'''
+
+
+def visitNumberFigure_multishop(mall_name, mall_data):
+    # 每次画多个商店访问量
+    x = []
+    y = []
+    y_dict = {}
+
+    shop_numbers, mall_shop_id = readCsvShop(mall_name)
+    shop_list = mall_shop_id[mall_name][0: 9]
+    fig2 = plt.figure(2)
+    for i in range(0, 9):
+        for data in mall_data[mall_name][shop_list[i]]['time_stamp']:
+            if data[1] in y_dict.keys():
+                y_dict[data[1]] += 1
+            else:
+                y_dict[data[1]] = 1
+
+        for day, num in y_dict.items():
+            x.append(int(day))
+            y.append(num)
+
+        ax = fig2.add_subplot(331 + i)
+        ax.bar(x, y, 0.2)
+        # xticks = range(0, max(x) + 1, 1)
+        # ax.set_xticks(xticks)
+        plt.xlabel('days')
+        plt.ylabel('visit number')
+        x = []
+        y = []
+        y_dict = {}
+
+    plt.show()
+
+'''获取一家商场各家店的平均访问量和最高访问量及时间'''
+
+
+def visitNumberMeans(mall_name, mall_data):
+    # 该商场各家店的平均访问量
+    x = []
+    y = []
+    y_dict = {}
+    shopVisitMeans = []
+    shop_mostVisitDay = {}
+    shop_numbers, mall_shop_id = readCsvShop(mall_name)
+
+    for shop in mall_shop_id[mall_name]:
+        for data in mall_data[mall_name][shop]['time_stamp']:
+            if data[1] in y_dict.keys():
+                y_dict[data[1]] += 1
+
+            else:
+                y_dict[data[1]] = 1
+
+        for day, num in y_dict.items():
+            x.append(int(day))
+            y.append(num)
+
+        shop_mostVisitDay[str(max(y))] = x[y.index(max(y))]
+        shopVisitMeans.append(sum(x) / len(y))
+        x = []
+        y = []
+        y_dict = {}
+
+    fig = plt.figure(1)
+    ax = fig.add_subplot(111)
+    ax.bar(range(shop_numbers[mall_name]), shopVisitMeans)
+    ax.title('shop visit number means')
+
+    with open(r'../source/mall_shop_most_visit_day.txt', 'r') as f:
+        f.write("each shop's most visit day and visit num" + '\n')
+        f.write('\n' + 'shop:         ' + 'num:   ' + 'day:')
+        for shop in mall_shop_id[mall_name]:
+            f.write('%s:')
+
+    plt.show()
 
 
 '''main'''
 
 
 def main():
-    mall = getMallData('m_1409')
+    mall, mall_shop_id= getMallData('m_1409')
+
+    # 画商店访问量
+    # visitNumberFigure_oneshop('m_1409', 's_2871718', mall)
+    visitNumberMeans('m_1409', mall)
+    # visitNumberFigure_multishop('m_1409', mall)
+
 
     # 打印数据
     # print 's_2871718 total bssid num', mall['m_1409']['s_2871718']['wifiinfo_bssid_num'], '\n'
