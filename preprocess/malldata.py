@@ -15,7 +15,7 @@
 
 '''
 
-
+a = float(sum(y.get_label() != (y_hat > 0.0))) / len(y_hat)
 import csv
 import matplotlib.pyplot as plt
 from mallnum import readCsvShop
