@@ -19,6 +19,10 @@
      画多个商铺访问量，找寻明星商铺
      画平均访问量，了解商铺受欢迎程度
 
+     过滤数据
+     可以根据过滤条件filter_rate来设置过滤范围，例如0.7代表把小于最大访问量70%的bssid过滤
+     返回一个字典，包含一个商场所有商店过滤后的bssid值
+
 '''
 
 
@@ -217,17 +221,44 @@ def visitNumberMeans(mall_name, mall_data):
             i += 1
     plt.show()
 
+'''过滤bssid，每家店铺固定bssid'''
+
+
+def bssidFilter(mall_data, mall_name, mall_shop_id, filter_rate):
+    filterd = {}
+    for shop in mall_shop_id[mall_name]:
+        filterd[shop] = {}
+        filterd[shop]['bssid'] = {}
+        filterd[shop]['visit'] = len(mall_data[mall_name][shop]['time_stamp'])
+
+        # count each bssid number
+        bssid_num = {}
+        for x in mall_data[mall_name][shop]['wifiinfo'][0]:
+            if not x in bssid_num.keys():
+                bssid_num[x] = 1
+            else:
+                bssid_num[x] = bssid_num[x] + 1
+        for bssid, num in bssid_num.items():
+            if num > (len(mall_data[mall_name][shop]['time_stamp']) * filter_rate):
+                filterd[shop]['bssid'][bssid] = num
+            else:
+                pass
+    a = 1
+
 
 '''main'''
 
 
 def main():
-    mall, mall_shop_id = getMallData('m_1409')
+    mall, mall_shop_id = getMallData('m_690')
+
+    # 过滤数据,根据bssid
+    bssidFilter(mall, 'm_690', mall_shop_id, 0.5)
 
     # 画一家商店的访问量
     # visitNumberFigure_oneshop('m_1409', 's_3963602', mall)
     # 画多家商店（一次九个，需要自己调参数）
-    visitNumberFigure_multishop('m_1409', mall)
+    visitNumberFigure_multishop('m_690', mall)
     # 画一个商场商店访问平均值和写出访问最多那一天的次数和日期
     # visitNumberMeans('m_1409', mall)
 
