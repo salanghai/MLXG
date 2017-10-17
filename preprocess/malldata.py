@@ -4,6 +4,7 @@
 
 
 '''
+
      文档说明
 
      mallnum.py中的其他函数可能有问题，不要使用
@@ -13,9 +14,14 @@
      {'m_690': {'s_123':{'longtitude': [],'latitude':[], 'wifiinfo': [[bssid],[-89],[true\false]],'wifiinfo_bssid_num':69,'time_stamp':[[]]}, 's_234':{},.......}}
      使用参考打印数据
 
+     商铺访问量
+     画单个商铺一个月的访问量，查看哪几天访问量大等
+     画多个商铺访问量，找寻明星商铺
+     画平均访问量，了解商铺受欢迎程度
+
 '''
 
-a = float(sum(y.get_label() != (y_hat > 0.0))) / len(y_hat)
+
 import csv
 import matplotlib.pyplot as plt
 from mallnum import readCsvShop
@@ -215,7 +221,7 @@ def main():
     # 画一家商店的访问量
     # visitNumberFigure_oneshop('m_1409', 's_3963602', mall)
     # 画多家商店（一次九个，需要自己调参数）
-    # visitNumberFigure_multishop('m_1409', mall)
+    visitNumberFigure_multishop('m_1409', mall)
     # 画一个商场商店访问平均值和写出访问最多那一天的次数和日期
     # visitNumberMeans('m_1409', mall)
 
