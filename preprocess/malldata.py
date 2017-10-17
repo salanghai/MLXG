@@ -80,6 +80,12 @@ def getMallData(mall_name):
                     mall[mall_name][curshop]['latitude'] = []
                     mall[mall_name][curshop]['time_stamp'] = []
                     mall[mall_name][curshop]['time_stamp'].append(time_stamp)
+
+                    # 处理下wifiinfo
+                    singnal = wifiinfo[1]
+                    wifiinfo[1] = []
+                    wifiinfo[1].append(singnal)
+
                     mall[mall_name][curshop]['wifiinfo'] = wifiinfo
                     mall[mall_name][curshop]['longitude'].append(line['longitude'])
                     mall[mall_name][curshop]['latitude'].append(line['latitude'])
@@ -89,8 +95,8 @@ def getMallData(mall_name):
                     mall[mall_name][curshop]['longitude'].append(line['longitude'])
                     mall[mall_name][curshop]['latitude'].append(line['latitude'])
                     mall[mall_name][curshop]['wifiinfo'][0] = mall[mall_name][curshop]['wifiinfo'][0] + wifiinfo[0]
-                    mall[mall_name][curshop]['wifiinfo'][1] = mall[mall_name][curshop]['wifiinfo'][1] + wifiinfo[1]
-                    mall[mall_name][curshop]['wifiinfo'][1] = mall[mall_name][curshop]['wifiinfo'][2] + wifiinfo[2]
+                    mall[mall_name][curshop]['wifiinfo'][1].append(wifiinfo[1])
+                    mall[mall_name][curshop]['wifiinfo'][2] = mall[mall_name][curshop]['wifiinfo'][2] + wifiinfo[2]
                     mall[mall_name][curshop]['time_stamp'].append(time_stamp)
 
     for shop in mall_shop_id[mall_name]:
@@ -216,7 +222,7 @@ def visitNumberMeans(mall_name, mall_data):
 
 
 def main():
-    mall, mall_shop_id= getMallData('m_1409')
+    mall, mall_shop_id = getMallData('m_1409')
 
     # 画一家商店的访问量
     # visitNumberFigure_oneshop('m_1409', 's_3963602', mall)
@@ -234,4 +240,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
