@@ -29,6 +29,7 @@
 import csv
 import matplotlib.pyplot as plt
 from mallnum import readCsvShop
+import numpy as np
 
 
 '''get the mall data including all info from the train set'''
@@ -221,6 +222,7 @@ def visitNumberMeans(mall_name, mall_data):
             i += 1
     plt.show()
 
+
 '''过滤bssid，每家店铺固定bssid'''
 
 
@@ -244,23 +246,107 @@ def bssidFilter(mall_data, mall_name, mall_shop_id, filter_rate):
             else:
                 pass
     a = 1
+    return filterd
+
+
+def bssidFilter_max(mall_data, mall_name, mall_shop_id, filter_rate):
+    filterd = {}
+    for shop in mall_shop_id[mall_name]:
+        filterd[shop] = {}
+        filterd[shop]['bssid'] = {}
+        filterd[shop]['visit'] = len(mall_data[mall_name][shop]['time_stamp'])
+
+        # count each bssid number
+        bssid_num = {}
+        for x in mall_data[mall_name][shop]['wifiinfo'][0]:
+            if not x in bssid_num.keys():
+                bssid_num[x] = 1
+            else:
+                bssid_num[x] = bssid_num[x] + 1
+        max_num = max(bssid_num.values())
+        for bssid, num in bssid_num.items():
+            if num > (max_num * filter_rate):
+                filterd[shop]['bssid'][bssid] = num
+            else:
+                pass
+    a = 1
+    return filterd
+
+
+'''solve the longitude and latitude'''
+
+
+def locationSolve(mall_data, mall_name, mall_shop_id):
+    a = 1
+    '''
+    测试那几位可用
+    shop_notcur = {}
+    for shop in mall_shop_id[mall_name]:
+        shop_notcur[shop] = 0
+        latitude_5 = mall_data[mall_name][shop]['latitude'][0][0: 5]
+        for latitude in mall_data[mall_name][shop]['latitude']:
+            if latitude[0: 5] != latitude_5:
+                shop_notcur[shop] += 1
+    '''
+
+    # 获取每个店铺的固定经纬度 存字典，未使用前四位数据
+    with open(r'../source/train_shop_info.csv') as csvf:
+        data = csv.DictReader(csvf)
+        shop_location = {}
+        for line in data:
+            if line['shop_id'] in mall_shop_id[mall_name]:
+                curshop = line['shop_id']
+                shop_location[curshop] = []
+                # shop_location[curshop].append(int((float(line['latitude']) - float(line['latitude'][0:6])) * 1000000))
+                # shop_location[curshop].append(int((float(line['longitude']) - float(line['longitude'][0:6])) * 1000000))
+                shop_location[curshop].append(float(line['latitude']) * 1000000)
+                shop_location[curshop].append(float(line['longitude']) * 1000000)
+
+
+    with open(r'../source/train_user_info.csv') as csvf:
+        data = csv.DictReader(csvf)
+        nearshop = {}
+        for line in data:
+            if line['shop_id'] in mall_shop_id[mall_name]:
+                # la = int((float(line['latitude']) - float(line['latitude'][0:6])) * 1000000)
+                # lo = int((float(line['longitude']) - float(line['longitude'][0:6])) * 1000000)
+                la = float(line['latitude']) * 1000000
+                lo = float(line['longitude']) * 1000000
+
+                for shop in shop_location.keys():
+                    distance_la = (la - shop_location[shop][0]) ** 2
+                    distance_lo = (lo - shop_location[shop][1]) ** 2
+                    distance = np.sqrt(distance_la + distance_lo)
+                    nearshop[shop] = distance
+                c = sorted(nearshop.items(), key=lambda e: e[1])
+
+
+                a = 1
+    a = 1
+
+
 
 
 '''main'''
 
 
 def main():
-    mall, mall_shop_id = getMallData('m_690')
+    mall_name = 'm_690'
+    mall, mall_shop_id = getMallData(mall_name)
 
     # 过滤数据,根据bssid
-    bssidFilter(mall, 'm_690', mall_shop_id, 0.5)
+    # bssidFilter_max(mall, 'm_690', mall_shop_id, 0.5)
+    bssidFilter(mall, mall_name, mall_shop_id, 0.5)
+
+    # 检验经纬度
+    # locationSolve(mall, 'm_690', mall_shop_id)
 
     # 画一家商店的访问量
     # visitNumberFigure_oneshop('m_1409', 's_3963602', mall)
     # 画多家商店（一次九个，需要自己调参数）
-    visitNumberFigure_multishop('m_690', mall)
+    # visitNumberFigure_multishop('m_690', mall)
     # 画一个商场商店访问平均值和写出访问最多那一天的次数和日期
-    # visitNumberMeans('m_1409', mall)
+    # visitNumberMeans(mall_name, mall)
 
     # 打印数据
     # print 's_2871718 total bssid num', mall['m_1409']['s_2871718']['wifiinfo_bssid_num'], '\n'
@@ -268,6 +354,7 @@ def main():
     # print 'lonitude:', mall['m_1409']['s_2871718']['longitude'], '\n'
     # print 'latitude', mall['m_1409']['s_2871718']['latitude']
 
+    a = 1
 
 if __name__ == '__main__':
     main()

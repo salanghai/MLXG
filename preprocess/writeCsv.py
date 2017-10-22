@@ -1,52 +1,20 @@
 # -*- coding: utf-8 -*-
-# @Author  : Mi
-# @Function: get the info deeplearn need
-
-'''
-
-    文档说明
-
-    获取一些深度学习需要的数据
-
-'''
+# @Author:   Mi
+# @Funciong: write some csv file
 
 
 import csv
-from malldata import getMallData
-from malldata import bssidFilter
-from malldata import bssidFilter_max
 
 
-'''get info'''
-
-def mall_dataGet(mall_name):
-    mall_data, mall_shop_id = getMallData(mall_name)
-    return mall_data, mall_shop_id
-
-
-def bssidGet(mall_data, mall_shop_id, mall_name):
+# 构造每条数据
+def writeBssid(mall_name, mall_shop_id, filtered):
     # bssid list
     bssid = []
     bssid_num = 0
 
-    # get filtered bssid
-    filtered = bssidFilter_max(mall_data, mall_name, mall_shop_id, 0.6)
-
     for shop in mall_shop_id[mall_name]:
         bssid = bssid + filtered[shop]['bssid'].keys()
         bssid_num = bssid_num + len(filtered[shop]['bssid'].keys())
-
-    # 写bssid
-    f1 = open(r'../source/bssid_list_m_690.txt', 'w')
-    f1.write(str(bssid))
-    f1.close()
-
-    f2 = open(r'../source/shop_list_m_690.txt', 'w')
-    f2.write(str(mall_shop_id[mall_name]))
-    f2.close()
-
-
-    # 构造每条数据
     shop_num = {}
     # 为每个商店编号
     i = 1
@@ -54,11 +22,17 @@ def bssidGet(mall_data, mall_shop_id, mall_name):
         if not shop in shop_num.keys():
             shop_num[shop] = i
             i += 1
-
+    # 写数据
     check_shop = {}
+    bssid_file = open(r'../model_use/filtered_bssid_' + mall_name + '.csv', 'w')
+    header = []
+    for i in range(len(bssid)):
+        header.append(str(i))
+    header.append('label')
+    csvwriter = csv.writer(bssid_file)
+    csvwriter.writerow(header)
     with open(r'../source/train_user_info.csv', 'r') as csvf:
         data = csv.DictReader(csvf)
-        bssid_file = open(r'../source/bssid_m_690.txt', 'w')
         for line in data:
             curdata = []
             if line['shop_id'] in mall_shop_id[mall_name]:
@@ -82,27 +56,11 @@ def bssidGet(mall_data, mall_shop_id, mall_name):
 
                 curdata.append(shop_num[line['shop_id']])
 
+                csvwriter.writerow(curdata)
+                '''
                 for item in curdata:
                     bssid_file.write(str(item) + ' ')
                 bssid_file.write('\n')
+                '''
 
         bssid_file.close()
-        a = 1
-
-
-
-
-'''main'''
-
-
-def main():
-    mall_data, mall_shop_id = mall_dataGet('m_690')
-    bssidGet(mall_data, mall_shop_id, 'm_690')
-
-
-
-if __name__ =='__main__':
-    main()
-
-
-
